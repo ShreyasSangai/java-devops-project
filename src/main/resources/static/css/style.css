@@ -1,0 +1,97 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+h2 { text-align: center; margin-bottom: 28px; color: #333; font-size: 1.6rem; }
+
+.form-group { margin-bottom: 18px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #555;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border-color 0.3s;
+    outline: none;
+}
+
+.form-group input:focus { border-color: #667eea; }
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.3s;
+}
+
+.btn:hover { opacity: 0.9; }
+
+.btn-danger {
+    background: linear-gradient(135deg, #f5576c, #f093fb);
+    margin-top: 20px;
+}
+
+.alert {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+}
+
+.alert-error  { background: #fee; color: #c0392b; border: 1px solid #f5c6cb; }
+.alert-success { background: #efe; color: #27ae60; border: 1px solid #c3e6cb; }
+
+.link-text { text-align: center; margin-top: 20px; color: #666; font-size: 0.9rem; }
+.link-text a { color: #667eea; text-decoration: none; font-weight: 600; }
+.link-text a:hover { text-decoration: underline; }
+
+.dashboard-card { max-width: 550px; }
+
+.info-box {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 4px solid #667eea;
+}
+
+.info-box p { margin: 8px 0; color: #555; }

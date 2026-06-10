@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard — DevOps App</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div class="card dashboard-card">
+        <h2>🚀 Welcome to Dashboard!</h2>
+        <p>Hello, <strong sec:authentication="name">User</strong>! 👋</p>
+        <p>You are successfully logged in.</p>
+
+        <div class="info-box">
+            <p>✅ Spring Boot Application</p>
+            <p>✅ AWS RDS MySQL Database</p>
+            <p>✅ Running on AWS EKS</p>
+            <p>✅ CI/CD via GitHub Actions</p>
+        </div>
+
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
