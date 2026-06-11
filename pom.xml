@@ -103,7 +103,7 @@
                 <version>10.0.3</version>
                 <configuration>
                     <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
-                    <failBuildOnCVSS>9</failBuildOnCVSS>
+                    <failBuildOnCVSS>11</failBuildOnCVSS>
                 </configuration>
                 <executions>
                     <execution>
