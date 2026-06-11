@@ -1,7 +1,9 @@
 # AWS Secrets Manager mein DB credentials store karo
+
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name        = "${var.project_name}/db-credentials"
-  description = "RDS MySQL credentials for Java DevOps App"
+  name                    = "${var.project_name}/db-credentials"
+  description             = "RDS MySQL credentials for Java DevOps App"
+  recovery_window_in_days = 0   # ← Ye add karo
 
   tags = {
     Name        = "${var.project_name}-db-secret"

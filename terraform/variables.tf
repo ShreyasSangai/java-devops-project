@@ -39,13 +39,13 @@ variable "private_subnet_cidrs" {
 variable "eks_cluster_version" {
   description = "Kubernetes version"
   type        = string
-  default     = "1.29"
+  default     = "1.30"    # 1.29 → 1.30 karo
 }
 
 variable "node_instance_type" {
   description = "EC2 instance type for EKS nodes"
   type        = string
-  default     = "t3.medium"
+  default     = "c7i-flex.large"   # t3.medium → c7i-flex.large
 }
 
 variable "node_min_size" {
