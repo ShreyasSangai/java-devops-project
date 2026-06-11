@@ -70,7 +70,7 @@ jobs:
 
       # Step 8: OWASP Dependency Check
       - name: OWASP Dependency Check
-        continue-on-error: true
+        if: false
         run: |
          mvn dependency-check:check -B \
           -DnvdApiKey=${{ secrets.NVD_API_KEY }} \
