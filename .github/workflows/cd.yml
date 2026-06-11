@@ -1,0 +1,109 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+    branches: [ main ]
+
+jobs:
+  deploy-to-eks:
+    name: Deploy to EKS via Helm
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      # Step 1: Checkout
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: AWS Credentials Configure
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      # Step 3: kubectl install
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.30.0'
+
+      # Step 4: Helm install
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'v3.14.0'
+
+      # Step 5: EKS kubeconfig update
+      - name: Update kubeconfig for EKS
+        run: |
+          aws eks update-kubeconfig \
+            --name java-devops-cluster \
+            --region ap-south-1
+
+      # Step 6: Image tag fetch karo
+      - name: Download Image Tag
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: ci.yml
+          name: image-tag
+
+      - name: Read Image Tag
+        id: get_tag
+        run: echo "IMAGE_TAG=$(cat image-tag.txt)" >> $GITHUB_OUTPUT
+
+      # Step 7: Namespace create karo
+      - name: Create Namespace
+        run: |
+          kubectl create namespace production --dry-run=client -o yaml | kubectl apply -f -
+
+      # Step 8: AWS Secrets Manager se K8s Secret banao
+      - name: Create K8s Secret from AWS Secrets Manager
+        run: |
+          SECRET=$(aws secretsmanager get-secret-value \
+            --secret-id "java-devops/db-credentials" \
+            --region ap-south-1 \
+            --query SecretString \
+            --output text)
+
+          DB_HOST=$(echo $SECRET | jq -r '.DB_HOST')
+          DB_NAME=$(echo $SECRET | jq -r '.DB_NAME')
+          DB_USERNAME=$(echo $SECRET | jq -r '.DB_USERNAME')
+          DB_PASSWORD=$(echo $SECRET | jq -r '.DB_PASSWORD')
+
+          kubectl create secret generic db-credentials \
+            --from-literal=DB_HOST=$DB_HOST \
+            --from-literal=DB_NAME=$DB_NAME \
+            --from-literal=DB_USERNAME=$DB_USERNAME \
+            --from-literal=DB_PASSWORD=$DB_PASSWORD \
+            --namespace production \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      # Step 9: Helm Deploy
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install java-devops-app ./helm/java-app \
+            --namespace production \
+            --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/java-devops-app \
+            --set image.tag=${{ steps.get_tag.outputs.IMAGE_TAG }} \
+            --set image.pullPolicy=Always \
+            --wait \
+            --timeout 5m
+
+      # Step 10: Rollout verify karo
+      - name: Verify Deployment
+        run: |
+          kubectl rollout status deployment/java-devops-app \
+            --namespace production \
+            --timeout=5m
+
+      # Step 11: Service URL print karo
+      - name: Get Application URL
+        run: |
+          echo "Deployment successful! 🚀"
+          kubectl get svc -n production
+          kubectl get pods -n production
