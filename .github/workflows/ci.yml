@@ -71,9 +71,16 @@ jobs:
       # Step 8: OWASP Dependency Check
       - name: OWASP Dependency Check
         run: |
-          mvn dependency-check:check -B \
-            -DfailBuildOnCVSS=9 \
-            -DsuppressionFile=suppression.xml || true
+         mvn dependency-check:check -B \
+          -DnvdApiKey=${{ secrets.NVD_API_KEY }} \
+          -DfailBuildOnCVSS=9 || true
+
+      - name: Upload OWASP Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+         name: owasp-report
+         path: target/dependency-check-report.html
 
       # Step 9: OWASP Report Upload
       - name: Upload OWASP Report
