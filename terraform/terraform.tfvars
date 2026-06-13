@@ -2,4 +2,4 @@
 aws_region   = "ap-south-1"
 project_name = "java-devops"
 environment  = "production"
-db_password  = "MySecurePass123!"   # Strong password rakho
+db_password  = "admin"   # Strong password rakho
